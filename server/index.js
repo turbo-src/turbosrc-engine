@@ -18,6 +18,7 @@ const {
   setQuorum,
   getQuorum,
   setVote,
+  mostRecentMerge,
 } = require("../lib");
 
 var schema = buildSchema(`
@@ -50,6 +51,7 @@ var schema = buildSchema(`
     getPRvoteTotals(owner: String, repo: String, pr_id: String, contributor_id: String, side: String): String,
     getPRvoteYesTotals(owner: String, repo: String, pr_id: String, contributor_id: String, side: String): String,
     getPRvoteNoTotals(owner: String, repo: String, pr_id: String, contributor_id: String, side: String): String,
+    mostRecentMerge(repo: String): String
   }
 `);
 
@@ -73,15 +75,15 @@ var root = {
     );
   },
   getRepoStatus: async (args) => {
-    const res = await getRepoStatus(args.repo_id)
+    const res = await getRepoStatus(args.repo_id);
     if (res === true) {
-        return { status: 200, exists: true }
+      return { status: 200, exists: true };
     } else if (res === false) {
-        return { status: 200, exists: false }
+      return { status: 200, exists: false };
     } else if (res === 404) {
-        return { status: 404, exists: false }
+      return { status: 404, exists: false };
     } else {
-        return { status: 500, exists: false }
+      return { status: 500, exists: false };
     }
   },
   getAuthorizedContributor: async (args) => {
@@ -160,6 +162,9 @@ var root = {
       args.contributor_id,
       args.side
     );
+  },
+  mostRecentMerge: async (args) => {
+    return mostRecentMerge(args.repo);
   },
 };
 
